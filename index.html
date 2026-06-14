@@ -1,189 +1,119 @@
-Ctrl+K
-Ctrl+J
-
-
-
-[ROLE] You are an experienced frontend developer who is specialized in building a chatbot interface. [TASK] Build a full-page chat interface for n8n with this npm package [https://www.npmjs.com/package/@n8n/chat]. Define all variables for customization according to @n8n/chat documentation. We will insert our own n8n webhook url later. Generate a html file with script and css. For n8n/chat package specs, enableStreaming should be set to false. [Context] The chatbot serves as a HR Assistant of Preface for employees to inquire about HR policy, where the AI Agent who handles the questions will be built in n8n, connected by webhook to this frontend.
-
-
-思考了4s
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Preface HR Assistant</title>
+    
     <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
-        
-        :root {
-            /* Preface Brand Colors */
-            --chat--color--primary: #2563eb;           /* Professional blue */
-            --chat--color--primary-shade-50: #1d4ed8;
-            --chat--color--primary--shade-100: #1e40af;
-            --chat--color--secondary: #10b981;         /* Emerald green for success/trust */
-            --chat--color-secondary-shade-50: #059669;
-            --chat--color-white: #ffffff;
-            --chat--color-light: #f8fafc;
-            --chat--color-light-shade-50: #f1f5f9;
-            --chat--color-light-shade-100: #e2e8f0;
-            --chat--color-medium: #cbd5e1;
-            --chat--color-dark: #0f172a;
-            --chat--color-disabled: #94a3b8;
-            --chat--color-typing: #64748b;
-
-            /* Typography */
-            --chat--font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            
-            /* Layout */
-            --chat--spacing: 1.25rem;
-            --chat--border-radius: 0.75rem;
-            --chat--transition-duration: 0.2s;
-            
-            /* Window */
-            --chat--window--width: 100%;
-            --chat--window--height: 100vh;
-            --chat--window--bottom: 0;
-            --chat--window--right: 0;
-            --chat--window--z-index: 10000;
-            --chat--window--border: none;
-            --chat--window--border-radius: 0;
-            --chat--window--margin-bottom: 0;
-            
-            /* Header */
-            --chat--header-height: 80px;
-            --chat--header--padding: 1.5rem 2rem;
-            --chat--header--background: linear-gradient(135deg, #0f172a 0%, #1e2937 100%);
-            --chat--header--color: #f8fafc;
-            --chat--heading--font-size: 1.5rem;
-            --chat--subtitle--font-size: 1rem;
-            
-            /* Messages */
-            --chat--message--font-size: 1.05rem;
-            --chat--message--padding: 1.25rem 1.5rem;
-            --chat--message--border-radius: 1rem;
-            --chat--message-line-height: 1.6;
-            --chat--message--bot--background: #ffffff;
-            --chat--message--bot--color: #0f172a;
-            --chat--message--bot--border: 1px solid #e2e8f0;
-            --chat--message--user--background: #2563eb;
-            --chat--message--user--color: #ffffff;
-            --chat--message--user--border: none;
-            
-            /* Input */
-            --chat--textarea--height: 56px;
-            --chat--textarea--max-height: 200px;
-            --chat--input--background: #ffffff;
-            --chat--input--text-color: #0f172a;
-            --chat--input--border: 2px solid #e2e8f0;
-            --chat--input--border-radius: 9999px;
-            --chat--input--padding: 1rem 1.5rem;
-            
-            /* Buttons */
-            --chat--button--background--primary: #2563eb;
-            --chat--button--color--primary: #ffffff;
-        }
-
-        html, body, #n8n-chat {
-            width: 100%;
-            height: 100%;
+        /* Reset and enforce full-page layout */
+        html, body {
             margin: 0;
             padding: 0;
-            overflow: hidden;
-            font-family: var(--chat--font-family);
-        }
-
-        body {
-            background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
-        }
-
-        .chat-container {
             width: 100%;
             height: 100%;
-            display: flex;
-            flex-direction: column;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f2f4f8;
         }
 
-        /* Custom welcome styling */
-        .chat-welcome {
-            text-align: center;
-            padding: 2rem;
+        /* Fullscreen container layout for the n8n target element */
+        #n8n-chat-container {
+            width: 100vw;
+            height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        /* Customizing @n8n/chat styles using official CSS Custom Variables 
+        */
+        :root {
+            /* Theme Colors */
+            --chat--color--primary: #0052cc;              /* Core brand color (e.g., Deep Tech Blue) */
+            --chat--color--primary-shade-50: #0043a4;     /* Slightly darker for hover/active states */
+            --chat--color--primary--shade-100: #003582;    /* Even darker shade */
+            --chat--color--secondary: #20b69e;            /* Secondary Accent Color (Teal) */
+            --chat--color-secondary-shade-50: #1ca08a;
+
+            /* Base Elements */
+            --chat--color-white: #ffffff;
+            --chat--color-light: #f7f9fc;
+            --chat--color-light-shade-50: #eef2f7;
+            
+            /* Text & Layout Adjustments */
+            --chat--window--height: 100%;                 /* Fallbacks for container inheritance */
+            --chat--window--width: 100%;
+            --chat--border-radius: 0px;                   /* Fullscreen mode benefits from sharp edge panels */
         }
     </style>
 </head>
 <body>
-    <div id="n8n-chat" class="chat-container"></div>
+
+    <div id="n8n-chat-container"></div>
 
     <script type="module">
         import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
 
-        // Placeholder webhook URL - replace with your actual n8n webhook
-        const WEBHOOK_URL = 'https://sammy123456.app.n8n.cloud/webhook/cdc0e91b-b40e-4983-9825-3d4e95bd5b34/chat';
-
         createChat({
-            webhookUrl: WEBHOOK_URL,
+            // REPLACE THIS: Insert your production n8n workflow Chat Trigger webhook URL here
+            webhookUrl: 'https://sammy123456.app.n8n.cloud/webhook/cdc0e91b-b40e-4983-9825-3d4e95bd5b34/chat',
             
-            // Core settings
+            // Webhook HTTP configurations
+            webhookConfig: {
+                method: 'POST',
+                headers: {}
+            },
+
+            // Target DOM selector where the UI elements render
+            target: '#n8n-chat-container',
+
+            // Mode can be 'window' (floating action bubble) or 'fullscreen' (takes up entire parent element)
             mode: 'fullscreen',
-            target: '#n8n-chat',
-            enableStreaming: false,
-            loadPreviousSession: true,
-            showWelcomeScreen: true,
-            
-            // Chat input and session keys (as per docs)
+
+            // Key mappings expected by your n8n AI Agent / Chat Trigger Node configurations
             chatInputKey: 'chatInput',
             chatSessionKey: 'sessionId',
+
+            // Toggle to store/load chat history from browser local session
+            loadPreviousSession: true,
+
+            // Global context metadata payload forwarded alongside each message payload
+            metadata: {},
+
+            // Set to true to force users to click through a landing panel before messaging
+            showWelcomeScreen: false,
+
+            // Localization
+            defaultLanguage: 'en',
             
-            // Metadata for HR context
-            metadata: {
-                assistantType: 'HR_Assistant',
-                company: 'Preface',
-                department: 'Human Resources',
-                purpose: 'HR policy inquiries and employee support'
-            },
-            
-            // Initial welcome messages
-            initialMessages: [
-                "Hello! I'm your Preface HR Assistant. 👋",
-                "I can help you with questions about company policies, benefits, leave, payroll, and more."
-            ],
-            
-            // Internationalization / Text customization
+            // Internationalization configuration mappings 
             i18n: {
                 en: {
-                    title: "Preface HR Assistant",
-                    subtitle: "Your go-to resource for HR policies, benefits, and workplace support",
-                    footer: "Confidential • Powered by Preface HR & n8n",
-                    getStarted: "Start New Conversation",
-                    inputPlaceholder: "Ask about HR policies, benefits, leave, or any workplace matter...",
-                }
+                    title: 'Preface HR Assistant 👋',
+                    subtitle: 'Ask me anything about company HR policies, leave balances, or handbooks.',
+                    footer: 'Powered by Preface AI Architecture',
+                    getStarted: 'Start New Conversation',
+                    inputPlaceholder: 'Type your HR-related question here...',
+                },
             },
-            
-            // File uploads - enable if your n8n workflow supports it
-            allowFileUploads: true,
-            allowedFilesMimeTypes: 'image/*,application/pdf,text/plain,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-        });
 
-        console.log('%cPreface HR Assistant chat interface loaded successfully!', 'color: #2563eb; font-weight: 600;');
+            // SPEC REQUIREMENT: Disable streaming so responses are delivered fully assembled 
+            enableStreaming: false,
+
+            // Optional static introductory messages displayed upon initializing an empty chat
+            initialMessages: [
+                'Welcome to the Preface HR Assistant! 🏢',
+                'I can help guide you through our internal operational policies, holiday configurations, benefits, and office workflows.',
+                'What would you like to inquire about today?'
+            ],
+
+            // File Upload options (Adjust based on your n8n configuration)
+            allowFileUploads: false,
+            allowedFilesMimeTypes: ''
+        });
     </script>
 </body>
 </html>
-How to use:
-
-Save this as preface-hr-chat.html
-Replace YOUR_N8N_WEBHOOK_URL_HERE with your actual n8n Chat Trigger webhook URL
-Open the file in a browser (or host it on your web server)
-All major customization options from @n8n/chat are defined and branded for a professional HR experience
-The interface is fully responsive, uses Preface-appropriate professional styling, and is ready for your n8n AI Agent backend.
-
-新增至聊天
-
-
-
-30 sources
-
-
-
-升級至 SuperGrok
-New conversation - Grok
